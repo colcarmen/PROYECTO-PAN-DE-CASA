@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Catálogo | Admin Pan de Casa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/index.css">
+  <style>
+    .catalog-layout {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+    }
+
+    .form-panel {
+      background: var(--surface-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      height: fit-content;
+    }
+
+    .product-list-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .product-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .product-list-img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 1024px) {
+      .catalog-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="logo mb-4">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Admin Panel
+      </div>
+      <nav class="admin-nav">
+        <a href="dashboard.html">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a href="orders.html">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Pedidos Activos
+        </a>
+        <a href="product-form.html" class="active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+          Catálogo
+        </a>
+      </nav>
+      <div style="margin-top: auto;">
+        <a href="../index.html" class="btn btn-outline" style="width: 100%;">Volver a Tienda</a>
+      </div>
+    </aside>
+
+    <main class="admin-content animate-fade-in">
+      <h1 class="mb-4">Gestión de Catálogo</h1>
+
+      <div class="catalog-layout">
+        <!-- Add/Edit Form -->
+        <div class="form-panel">
+          <h2 class="mb-3" id="formTitle">Añadir Nuevo Producto</h2>
+          <form id="productForm" onsubmit="handleSaveProduct(event)">
+            <input type="hidden" id="productId">
+            
+            <div class="form-group">
+              <label class="form-label">Nombre del Producto</label>
+              <input type="text" id="productName" class="form-control" required placeholder="Ej. Pan Dulce">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Precio ($ MXN)</label>
+              <input type="number" id="productPrice" class="form-control" required min="1" step="0.5" placeholder="85.00">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">URL de la Imagen</label>
+              <input type="url" id="productImage" class="form-control" required placeholder="https://ejemplo.com/imagen.jpg">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Descripción</label>
+              <textarea id="productDesc" class="form-control" rows="3" required placeholder="Detalles sobre ingredientes y proceso..."></textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary" style="flex: 1;" id="saveBtn">Guardar Producto</button>
+              <button type="button" class="btn btn-outline" onclick="resetForm()" id="cancelBtn" style="display: none;">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Product List -->
+        <div class="form-panel">
+          <h2 class="mb-3">Productos Existentes</h2>
+          <div id="productsContainer">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProductsList();
+    });
+
+    function renderProductsList() {
+      const products = window.AppStore.getProducts();
+      const container = document.getElementById('productsContainer');
+
+      if (products.length === 0) {
+        container.innerHTML = `<p class="text-muted text-center" style="padding: 2rem;">No hay productos en el catálogo.</p>`;
+        return;
+      }
+
+      container.innerHTML = products.map(product => `
+        <div class="product-list-item">
+          <img src="${product.image}" alt="${product.name}" class="product-list-img">
+          <div style="flex-grow: 1;">
+            <div style="font-weight: 600;">${product.name}</div>
+            <div style="color: var(--text-muted); font-size: 0.9rem;">${window.formatCurrency(product.price)}</div>
+          </div>
+          <button class="btn btn-outline" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;" onclick="editProduct('${product.id}')">Editar</button>
+          <button class="btn btn-outline" style="padding: 0.4rem 0.6rem; font-size: 0.8rem; border-color: #ef4444; color: #ef4444;" onclick="deleteProduct('${product.id}')">Borrar</button>
+        </div>
+      `).join('');
+    }
+
+    function handleSaveProduct(e) {
+      e.preventDefault();
+
+      const id = document.getElementById('productId').value;
+      const product = {
+        name: document.getElementById('productName').value,
+        price: parseFloat(document.getElementById('productPrice').value),
+        image: document.getElementById('productImage').value,
+        description: document.getElementById('productDesc').value
+      };
+
+      if (id) {
+        product.id = id;
+        window.AppStore.updateProduct(product);
+      } else {
+        window.AppStore.addProduct(product);
+      }
+
+      resetForm();
+      renderProductsList();
+      alert(id ? "Producto actualizado con éxito." : "Producto agregado con éxito.");
+    }
+
+    function editProduct(id) {
+      const product = window.AppStore.getProductById(id);
+      if (!product) return;
+
+      document.getElementById('formTitle').textContent = 'Editar Producto';
+      document.getElementById('productId').value = product.id;
+      document.getElementById('productName').value = product.name;
+      document.getElementById('productPrice').value = product.price;
+      document.getElementById('productImage').value = product.image;
+      document.getElementById('productDesc').value = product.description;
+
+      document.getElementById('saveBtn').textContent = 'Guardar Cambios';
+      document.getElementById('cancelBtn').style.display = 'inline-flex';
+    }
+
+    function deleteProduct(id) {
+      if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+        window.AppStore.deleteProduct(id);
+        renderProductsList();
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('productForm').reset();
+      document.getElementById('productId').value = '';
+      document.getElementById('formTitle').textContent = 'Añadir Nuevo Producto';
+      document.getElementById('saveBtn').textContent = 'Guardar Producto';
+      document.getElementById('cancelBtn').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

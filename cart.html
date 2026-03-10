@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito de Compras | Pan de Casa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/index.css">
+  <style>
+    .cart-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      padding: 3rem 0;
+    }
+    
+    .cart-items {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .cart-item {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      align-items: center;
+    }
+    
+    .cart-item-img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    
+    .cart-item-info {
+      flex-grow: 1;
+    }
+    
+    .cart-item-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .cart-item-price {
+      color: var(--text-muted);
+    }
+    
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .qty-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: var(--surface-color);
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    
+    .qty-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    
+    .cart-summary {
+      background: var(--surface-color);
+      padding: 2rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      font-size: 1.05rem;
+    }
+    
+    .summary-total {
+      border-top: 1px solid var(--border-color);
+      padding-top: 1rem;
+      margin-top: 1rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+    
+    .btn-block {
+      width: 100%;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .cart-layout {
+        grid-template-columns: 1fr;
+      }
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .cart-item-img {
+        width: 100%;
+        height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav-content">
+      <a href="index.html" class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Pan de Casa
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Catálogo</a>
+        <a href="order-status.html">Mis Pedidos</a>
+        <a href="admin/dashboard.html">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container animate-fade-in">
+    <h1 style="margin-top: 2rem;">Tu Carrito de Compras</h1>
+    
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+      <h2>Tu carrito está vacío</h2>
+      <p>Parece que aún no has agregado nuestros deliciosos panes a tu carrito.</p>
+      <a href="index.html" class="btn btn-primary mt-3">Ir al Catálogo</a>
+    </div>
+
+    <div class="cart-layout" id="cartLayout">
+      <div class="cart-items" id="cartItems">
+        <!-- Rendered by JS -->
+      </div>
+      
+      <div class="cart-summary">
+        <h3>Resumen del Pedido</h3>
+        <div class="mt-4">
+          <div class="summary-row">
+            <span>Subtotal (<span id="summaryCount">0</span> artículos)</span>
+            <span id="summarySubtotal">$0.00</span>
+          </div>
+          <div class="summary-row" style="color: var(--text-muted); font-size: 0.9rem;">
+            <span>Envío</span>
+            <span>Calculado en el checkout</span>
+          </div>
+          <div class="summary-row summary-total">
+            <span>Total</span>
+            <span id="summaryTotal">$0.00</span>
+          </div>
+        </div>
+        <a href="checkout.html" class="btn btn-primary btn-block">Proceder al Pago</a>
+        <button class="btn btn-outline btn-block mt-2" onclick="window.AppStore.clearCart(); renderCart();">Vaciar Carrito</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/store.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCart();
+      window.addEventListener('cartUpdated', renderCart);
+    });
+
+    function updateQuantity(productId, delta) {
+      const cart = window.AppStore.getCart();
+      const item = cart.find(i => i.product.id === productId);
+      if (item) {
+        window.AppStore.updateCartItemQuantity(productId, item.quantity + delta);
+      }
+    }
+
+    function renderCart() {
+      const cart = window.AppStore.getCart();
+      const emptyState = document.getElementById('emptyState');
+      const cartLayout = document.getElementById('cartLayout');
+      
+      if (cart.length === 0) {
+        emptyState.style.display = 'block';
+        cartLayout.style.display = 'none';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      cartLayout.style.display = 'grid';
+
+      const cartItemsContainer = document.getElementById('cartItems');
+      cartItemsContainer.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <img src="${item.product.image}" alt="${item.product.name}" class="cart-item-img">
+          <div class="cart-item-info">
+            <div class="cart-item-title">${item.product.name}</div>
+            <div class="cart-item-price">${window.formatCurrency(item.product.price)} c/u</div>
+            <div class="quantity-control">
+              <button class="qty-btn" onclick="updateQuantity('${item.product.id}', -1)">-</button>
+              <span style="font-weight: 600; width: 20px; text-align: center;">${item.quantity}</span>
+              <button class="qty-btn" onclick="updateQuantity('${item.product.id}', 1)">+</button>
+              <span style="margin-left: auto; font-weight: 700; font-size: 1.1rem;">
+                ${window.formatCurrency(item.product.price * item.quantity)}
+              </span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Update summary
+      const count = window.AppStore.getCartCount();
+      const total = window.AppStore.getCartTotal();
+      
+      document.getElementById('summaryCount').textContent = count;
+      document.getElementById('summarySubtotal').textContent = window.formatCurrency(total);
+      document.getElementById('summaryTotal').textContent = window.formatCurrency(total);
+    }
+  </script>
+</body>
+</html>

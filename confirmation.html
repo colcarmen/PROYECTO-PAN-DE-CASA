@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedido Confirmado | Pan de Casa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/index.css">
+  <style>
+    .success-container {
+      max-width: 600px;
+      margin: 4rem auto;
+      text-align: center;
+      background: var(--surface-color);
+      padding: 3rem 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-color);
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background-color: #dcfce7;
+      color: #166534;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .order-id {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 1rem 0 2rem;
+      letter-spacing: 2px;
+    }
+
+    .next-steps {
+      background: #fafafa;
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+
+    .next-steps p {
+      margin-bottom: 0.5rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .next-steps svg {
+      color: var(--primary);
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav-content">
+      <a href="index.html" class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Pan de Casa
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Catálogo</a>
+        <a href="order-status.html">Mis Pedidos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container animate-fade-in">
+    <div class="success-container">
+      <div class="success-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      
+      <h1>¡Tu pedido está confirmado!</h1>
+      <p>Hemos recibido tu pedido y nuestros panaderos ya están preparando los hornos para ti.</p>
+
+      <div class="order-id" id="displayOrderId">Cargando...</div>
+
+      <div class="next-steps">
+        <h3 class="mb-2">¿Qué sigue?</h3>
+        <p>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Estaremos preparando tu pedido fresco.
+        </p>
+        <p>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          Recibirás el estado de la orden en esta página.
+        </p>
+        <p>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          Saldrá a reparto en breve.
+        </p>
+      </div>
+
+      <div class="d-flex justify-center gap-2" style="flex-wrap: wrap;">
+        <a href="order-status.html" class="btn btn-primary" id="trackOrderBtn">Rastrear Pedido</a>
+        <a href="index.html" class="btn btn-outline">Volver al Inicio</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId');
+      
+      if (orderId) {
+        document.getElementById('displayOrderId').textContent = orderId;
+      } else {
+        document.getElementById('displayOrderId').textContent = "ID Desconocido";
+      }
+    });
+  </script>
+</body>
+</html>

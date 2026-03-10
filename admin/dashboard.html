@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Admin Pan de Casa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/index.css">
+  <style>
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      background: var(--surface-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .metric-title {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="logo mb-4">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Admin Panel
+      </div>
+      <nav class="admin-nav">
+        <a href="dashboard.html" class="active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a href="orders.html">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Pedidos Activos
+        </a>
+        <a href="product-form.html">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+          Catálogo
+        </a>
+      </nav>
+      <div style="margin-top: auto;">
+        <a href="../index.html" class="btn btn-outline" style="width: 100%;">Volver a Tienda</a>
+      </div>
+    </aside>
+
+    <main class="admin-content animate-fade-in">
+      <h1 class="mb-4">Resumen del Día</h1>
+      
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-title">Ventas Totales</span>
+          <span class="metric-value" id="totalSales">$0.00</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-title">Pedidos Totales</span>
+          <span class="metric-value" id="totalOrdersCount">0</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-title">Pendientes de Entrega</span>
+          <span class="metric-value" id="pendingOrdersCount">0</span>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 2rem;">
+        <h2 class="mb-4">Reporte de Producción (Productos a hornear)</h2>
+        <div class="table-wrapper">
+          <table id="productionTable">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad Requerida</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      calculateMetrics();
+      generateProductionReport();
+    });
+
+    function calculateMetrics() {
+      const orders = window.AppStore.getOrders();
+      
+      const totalSales = orders.reduce((sum, order) => sum + order.total, 0);
+      document.getElementById('totalSales').textContent = window.formatCurrency(totalSales);
+      
+      document.getElementById('totalOrdersCount').textContent = orders.length;
+      
+      const pendingCount = orders.filter(o => o.status !== 'delivered').length;
+      document.getElementById('pendingOrdersCount').textContent = pendingCount;
+    }
+
+    function generateProductionReport() {
+      const orders = window.AppStore.getOrders();
+      const productCounts = {};
+
+      // Only count products from orders that aren't delivered yet
+      const pendingOrders = orders.filter(o => o.status !== 'delivered');
+
+      pendingOrders.forEach(order => {
+        order.items.forEach(item => {
+          if (!productCounts[item.product.name]) {
+            productCounts[item.product.name] = 0;
+          }
+          productCounts[item.product.name] += item.quantity;
+        });
+      });
+
+      const tbody = document.querySelector('#productionTable tbody');
+      
+      const rows = Object.keys(productCounts).map(name => {
+        return `
+          <tr>
+            <td style="font-weight: 500;">${name}</td>
+            <td style="font-weight: 700; color: var(--primary); font-size: 1.1rem;">${productCounts[name]}</td>
+          </tr>
+        `;
+      });
+
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="2" class="text-center" style="padding: 2rem;">No hay productos para producir.</td></tr>`;
+      } else {
+        tbody.innerHTML = rows.join('');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finalizar Compra | Pan de Casa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/index.css">
+  <style>
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 3rem;
+      padding: 3rem 0;
+    }
+
+    .form-section {
+      background: var(--surface-color);
+      padding: 2.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      margin-bottom: 2rem;
+    }
+
+    .form-section-title {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .row > .form-group {
+      flex: 1;
+    }
+
+    .order-summary {
+      background: #fafafa;
+      padding: 2rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .summary-total {
+      border-top: 2px dashed var(--border-color);
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 768px) {
+      .checkout-layout { grid-template-columns: 1fr; gap: 2rem; }
+      .row { flex-direction: column; gap: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav-content">
+      <a href="index.html" class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Pan de Casa
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Catálogo</a>
+        <a href="order-status.html">Mis Pedidos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container animate-fade-in">
+    <h1 style="margin-top: 2rem;">Finalizar Compra</h1>
+    <p class="mb-4">Ingresa tus datos para completar el pedido.</p>
+
+    <div class="checkout-layout">
+      <!-- Checkout Form -->
+      <form id="checkoutForm" onsubmit="handlePlaceOrder(event)">
+        <div class="form-section">
+          <h2 class="form-section-title">Datos de Contacto</h2>
+          <div class="row">
+            <div class="form-group">
+              <label class="form-label">Nombre Completo</label>
+              <input type="text" id="name" class="form-control" required placeholder="Ej. María García">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Teléfono</label>
+              <input type="tel" id="phone" class="form-control" required placeholder="Ej. 555-123-4567">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Correo Electrónico</label>
+            <input type="email" id="email" class="form-control" required placeholder="maria@ejemplo.com">
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2 class="form-section-title">Detalles de Entrega</h2>
+          <div class="form-group">
+            <label class="form-label">Dirección de Entrega</label>
+            <input type="text" id="address" class="form-control" required placeholder="Calle 123, Colonia Centro">
+          </div>
+          <div class="row">
+            <div class="form-group">
+              <label class="form-label">Código Postal</label>
+              <input type="text" id="zip" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ciudad</label>
+              <input type="text" id="city" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notas Especiales (Opcional)</label>
+            <textarea id="notes" class="form-control" rows="3" placeholder="Instrucciones para la entrega..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2 class="form-section-title">Método de Pago</h2>
+          <div class="form-group">
+            <select id="paymentMethod" class="form-control" required>
+              <option value="">Selecciona un método</option>
+              <option value="card_delivery">Tarjeta (Terminal al Entregar)</option>
+              <option value="cash_delivery">Efectivo al Entregar</option>
+              <option value="transfer">Transferencia SPEI (Previa)</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem;">Confirmar Pedido</button>
+      </form>
+
+      <!-- Order Summary -->
+      <div class="order-summary" id="orderSummaryWrapper">
+        <h3 class="mb-3">Resumen de tu pedido</h3>
+        <div id="checkoutItems" class="mb-4">
+          <!-- Rendered by JS -->
+        </div>
+        
+        <div class="summary-total">
+          <span>Total a Pagar</span>
+          <span id="checkoutTotal">$0.00</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/store.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCheckoutSummary();
+    });
+
+    function renderCheckoutSummary() {
+      const cart = window.AppStore.getCart();
+      if (cart.length === 0) {
+        window.location.href = 'index.html'; // Redirect if cart is empty
+        return;
+      }
+
+      const itemsContainer = document.getElementById('checkoutItems');
+      itemsContainer.innerHTML = cart.map(item => `
+        <div class="summary-item">
+          <span style="flex: 1;">${item.quantity}x ${item.product.name}</span>
+          <span>${window.formatCurrency(item.product.price * item.quantity)}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('checkoutTotal').textContent = window.formatCurrency(window.AppStore.getCartTotal());
+    }
+
+    function handlePlaceOrder(e) {
+      e.preventDefault();
+
+      // Collect customer data
+      const customerData = {
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value,
+        address: document.getElementById('address').value,
+        zip: document.getElementById('zip').value,
+        city: document.getElementById('city').value,
+        notes: document.getElementById('notes').value,
+        paymentMethod: document.getElementById('paymentMethod').value
+      };
+
+      // Place order in store
+      const order = window.AppStore.placeOrder(customerData);
+
+      if (order) {
+        window.location.href = `confirmation.html?orderId=${order.id}`;
+      } else {
+        alert("Hubo un error al procesar tu pedido. Intenta nuevamente.");
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estado de mi Pedido | Pan de Casa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/index.css">
+  <style>
+    .tracker-container {
+      max-width: 800px;
+      margin: 2rem auto;
+    }
+
+    .tracker-card {
+      background: var(--surface-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .tracker-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 3rem;
+      padding: 0 1rem;
+    }
+
+    .progress-line {
+      position: absolute;
+      top: 15px;
+      left: 10%;
+      right: 10%;
+      height: 4px;
+      background: var(--border-color);
+      z-index: 1;
+    }
+
+    .progress-line-fill {
+      position: absolute;
+      top: 15px;
+      left: 10%;
+      height: 4px;
+      background: var(--primary);
+      z-index: 2;
+      transition: width 0.5s ease-in-out;
+    }
+
+    .progress-step {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      width: 20%;
+    }
+
+    .step-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #fcfcfc;
+      border: 4px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .step-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .progress-step.active .step-circle {
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(231, 110, 85, 0.2);
+    }
+    
+    .progress-step.active .step-circle::after {
+      content: '';
+      width: 12px;
+      height: 12px;
+      background: var(--primary);
+      border-radius: 50%;
+    }
+
+    .progress-step.active .step-label {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .progress-step.completed .step-circle {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .progress-step.completed .step-circle::after {
+      content: '✓';
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    /* Order Details */
+    .order-items-list {
+      margin-top: 1.5rem;
+    }
+
+    .order-item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .order-item-row:last-child {
+      border-bottom: none;
+    }
+
+    .empty-orders {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    @media (max-width: 600px) {
+      .tracker-header { flex-direction: column; gap: 1rem; }
+      .progress-label { display: none; }
+      .progress-bar { padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav-content">
+      <a href="index.html" class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Pan de Casa
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Catálogo</a>
+        <a href="order-status.html" class="active">Mis Pedidos</a>
+        <a href="admin/dashboard.html">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container animate-fade-in">
+    <div class="tracker-container">
+      <h1 class="mb-4">Mis Pedidos</h1>
+      
+      <div id="ordersList">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </main>
+
+  <script src="js/store.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderOrders();
+      // Polling for updates (since localStorage doesn't trigger events across same window easily without storage event which only fires on other tabs)
+      setInterval(renderOrders, 5000); 
+    });
+
+    const STATUS_MAP = {
+      'pending': { index: 0, label: 'Recibido' },
+      'prep': { index: 1, label: 'En Preparación' },
+      'ready': { index: 2, label: 'Listo para Envío' },
+      'delivered': { index: 3, label: 'Entregado' }
+    };
+
+    function renderOrders() {
+      const orders = window.AppStore.getOrders();
+      const container = document.getElementById('ordersList');
+
+      if (orders.length === 0) {
+        container.innerHTML = `
+          <div class="tracker-card empty-orders">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2" style="margin: 0 auto 1rem;">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+            </svg>
+            <h2>No tienes pedidos recientes</h2>
+            <p class="text-muted mt-2">Visita nuestro catálogo y elige tus panes favoritos.</p>
+            <a href="index.html" class="btn btn-primary mt-3">Ir al Catálogo</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = orders.map(order => generateOrderHTML(order)).join('');
+    }
+
+    function generateOrderHTML(order) {
+      const currentStatusIndex = STATUS_MAP[order.status]?.index || 0;
+      
+      // Calculate progress width
+      const maxIndex = 3;
+      const progressWidth = currentStatusIndex === 0 ? '0%' : `${(currentStatusIndex / maxIndex) * 100}%`;
+
+      const stepsHTML = ['Recibido', 'En Preparación', 'Listo', 'Entregado'].map((label, idx) => {
+        let classes = 'progress-step';
+        if (idx === currentStatusIndex) classes += ' active';
+        else if (idx < currentStatusIndex) classes += ' completed';
+        
+        return `
+          <div class="${classes}">
+            <div class="step-circle"></div>
+            <span class="step-label">${label}</span>
+          </div>
+        `;
+      }).join('');
+
+      const itemsHTML = order.items.map(item => `
+        <div class="order-item-row">
+          <span>${item.quantity}x ${item.product.name}</span>
+          <span>${window.formatCurrency(item.product.price * item.quantity)}</span>
+        </div>
+      `).join('');
+
+      return `
+        <div class="tracker-card">
+          <div class="tracker-header">
+            <div>
+              <h2 style="font-size: 1.25rem;">Pedido #${order.id}</h2>
+              <p class="text-muted" style="margin:0; font-size: 0.9rem;">${window.formatDate(order.createdAt)}</p>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 1.25rem; font-weight: 700;">${window.formatCurrency(order.total)}</div>
+              <span class="status status-${order.status} mt-1">${STATUS_MAP[order.status]?.label}</span>
+            </div>
+          </div>
+
+          <div class="progress-bar">
+            <div class="progress-line"></div>
+            <div class="progress-line-fill" style="width: ${progressWidth}"></div>
+            ${stepsHTML}
+          </div>
+
+          <div style="background: #fafafa; border-radius: 8px; padding: 1.5rem; margin-top: 2rem;">
+            <h3 style="font-size: 1rem; margin-bottom: 1rem;">Detalles de la compra</h3>
+            <div class="order-items-list">
+              ${itemsHTML}
+            </div>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.9rem;">
+              <strong>Entrega en:</strong> ${order.customer.address}, ${order.customer.city}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
