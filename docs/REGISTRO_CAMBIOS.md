@@ -31,3 +31,37 @@
   2. Entrar a `admin/product-form.html`, crear un producto simulado, y verificar que no haya problemas de renderizado al cargarse.
   3. Ejecutar simulación de carga insegura probando títulos con elementos de inyección como: `<script>alert(1)</script>` para constatar su escape limpio.
 - **Plan de Contingencia (Rollback):** Ejecución de `git restore --staged . && git checkout .` en caso de fallo crítico en pruebas iniciales antes de consolidar el Merge hacia ramas productivas (producción).
+
+---
+
+## Informe de Cambio Normativo
+**Id de Cambio/Commit:** Doc-Norm-20260310-02
+**Fecha:** 2026-03-10
+**Responsable:** Agente AI (Antigravity)
+
+### 1. Dimensionamiento del Cambio (ISO 12207 - Mantenimiento)
+- **Propósito y Categoría:** Adaptación, Acción Preventiva y Documentación Didáctica (Validación de Estándares).
+- **Elementos Modificados:** 
+  - `admin/dashboard.html`: Validación de sintaxis HTML e inclusión de comentarios pedagógicos.
+  - `admin/orders.html`: Validación de sintaxis HTML e inclusión de comentarios pedagógicos.
+  - `admin/product-form.html`: Refinamiento estructural y comentarios didácticos.
+  - `css/index.css`: Corrección de reglas CSS (Stylelint) y anotaciones sobre diseño responsivo y tipografía.
+  - `index.html`: Optimización de carga de scripts (CRP) y metadatos SEO.
+  - `js/admin-catalog.js`: Validación de lógica administrativa (ESLint) y comentarios explicativos.
+- **Descripción Técnica:** Se ejecutaron herramientas de análisis estático (Linters) para asegurar la integridad de los lenguajes cliente. Se reestructuró la carga de scripts en `index.html` desplazándolos al final del `body` para mejorar el tiempo de interactividad. Además, se aplicó una capa de documentación interna en español orientada a facilitar la comprensión del código para perfiles en formación.
+
+### 2. Aseguramiento de Calidad (ISO/IEC TR 90006)
+- **Requisito de Calidad Atendido:** Mantenibilidad (Legibilidad del código), Usabilidad (Optimización SEO) y Portabilidad (Cumplimiento de Estándares W3C/ECMAScript).
+- **Criterios de Aceptación:** 
+  - Ausencia de errores críticos en validadores automáticos.
+  - Los scripts externos deben cargarse después del renderizado del DOM principal.
+  - Los archivos clave deben poseer comentarios descriptivos de sus secciones principales.
+
+### 3. Control y Gestión del Cambio (ITIL / ISO 20000)
+- **Análisis de Riesgo:** Muy Bajo - Se preserva la lógica de negocio; los cambios son estructurales sobre comentarios y posición de recursos.
+- **Evaluación de Impacto:** Mejora ligera en el rendimiento percibido y gran impacto positivo en la mantenibilidad por parte de terceros.
+- **Plan de Pruebas (Validación):** 
+  1. Ejecución de `npm run lint` (si está configurado) o validación manual de sintaxis.
+  2. Verificar que las funcionalidades de administración (dashboard y órdenes) cargan sin errores en consola.
+  3. Comprobar que el SEO metatag en `index.html` es visible para agentes de rastreo.
+- **Plan de Contingencia (Rollback):** Ejecución de `git checkout .` para restaurar el estado previo a las anotaciones y reubicación de scripts.

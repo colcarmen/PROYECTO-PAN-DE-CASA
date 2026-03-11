@@ -51,7 +51,7 @@ window.handleSaveProduct = function(e) {
     window.AppStore.addProduct(product);
   }
 
-  resetForm();
+  window.resetForm();
   renderProductsList();
   
   // Visual feedback opcional: Toast o alerta simple (mantenemos alert por ahora)

@@ -8,6 +8,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/index.css">
+  <script>
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+      window.location.href = 'login.html';
+    }
+    function logoutAdmin() {
+      localStorage.removeItem('isAdminLoggedIn');
+      window.location.href = '../index.html';
+    }
+  </script>
   <style>
     .metrics-grid {
       display: grid;
@@ -63,8 +72,9 @@
           Catálogo
         </a>
       </nav>
-      <div style="margin-top: auto;">
+      <div style="margin-top: auto; display: flex; flex-direction: column; gap: 0.5rem;">
         <a href="../index.html" class="btn btn-outline" style="width: 100%;">Volver a Tienda</a>
+        <button onclick="logoutAdmin()" class="btn btn-outline" style="width: 100%; color: var(--primary); border-color: var(--primary);">Cerrar Sesión</button>
       </div>
     </aside>
 

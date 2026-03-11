@@ -1,25 +1,53 @@
+/* ============================================================
+   VARIABLES CSS GLOBALES (Custom Properties)
+   Las variables CSS (también llamadas "custom properties") permiten
+   definir valores reutilizables en un solo lugar.
+   Si mañana quieres cambiar el color principal del sitio,
+   solo cambias --primary aquí y afecta a TODA la página.
+   Se definen dentro de :root, que representa el elemento raíz
+   (equivalente a <html>), para que estén disponibles en todo el CSS.
+============================================================ */
 :root {
-  --primary: #e76e55;
-  --primary-hover: #d65a41;
-  --bg-color: #fcfcfc;
-  --surface-color: #ffffff;
-  --text-main: #333333;
-  --text-muted: #666666;
-  --border-color: #eaeaea;
-  --radius: 12px;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
-  --shadow-lg: 0 16px 48px rgba(0,0,0,0.12);
-  --nav-height: 70px;
+  --primary: #e76e55;         /* Color naranja-rojizo principal (botones, links) */
+  --primary-hover: #d65a41;   /* Versión más oscura del color principal para el hover */
+  --bg-color: #fcfcfc;        /* Color de fondo general de la página (casi blanco) */
+  --surface-color: #fff;      /* Blanco puro para tarjetas y superficies elevadas */
+  --text-main: #333;          /* Color del texto principal (gris oscuro, más suave que el negro) */
+  --text-muted: #666;         /* Color para textos secundarios o de menor importancia */
+  --border-color: #eaeaea;    /* Color para bordes y líneas divisoras */
+  --radius: 12px;             /* Radio de esquinas redondeadas (se usa en tarjetas, botones) */
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 5%);   /* Sombra sutil para elementos pequeños */
+  --shadow-md: 0 8px 24px rgb(0 0 0 / 8%);  /* Sombra mediana para tarjetas en hover */
+  --shadow-lg: 0 16px 48px rgb(0 0 0 / 12%);/* Sombra grande para modales o elementos flotantes */
+  --nav-height: 70px;         /* Altura fija de la barra de navegación */
+
+  /* cubic-bezier crea una animación con aceleración y desaceleración suave
+     en lugar de moverse a velocidad constante (lo que se ve más natural). */
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+/* ============================================================
+   RESET BÁSICO
+   Los navegadores aplican márgenes y rellenos propios a los
+   elementos HTML. Con este "reset" los quitamos todos para
+   tener control total sobre el diseño.
+   El selector * aplica a TODOS los elementos de la página.
+   box-sizing: border-box; hace que el padding y el borde se
+   incluyan dentro del ancho total del elemento (muy útil).
+============================================================ */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+/* ============================================================
+   ESTILOS DEL BODY (Cuerpo de la página)
+   font-family: usa la fuente "Work Sans" importada de Google Fonts.
+   Si no carga, usa cualquier fuente sans-serif genérica del sistema.
+   line-height: 1.6 da espacio entre líneas, mejorando la legibilidad.
+   -webkit-font-smoothing: hace que los textos se vean más nítidos en Mac.
+============================================================ */
 body {
   font-family: 'Work Sans', sans-serif;
   background-color: var(--bg-color);
@@ -28,21 +56,38 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Typography */
+/* ============================================================
+   TIPOGRAFÍA (Títulos)
+   Se aplica a todos los niveles de título (h1 al h6).
+   Se usa font-weight 600 (semibold) como base y
+   un pequeño margen inferior para separar del siguiente elemento.
+============================================================ */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   color: var(--text-main);
   margin-bottom: 0.5rem;
 }
 
-h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.02em; }
-h2 { font-size: 2rem; letter-spacing: -0.01em; }
-
-p {
-  color: var(--text-muted);
-  margin-bottom: 1rem;
+/* letter-spacing negativo en títulos grandes los hace ver
+   más compactos y modernos (es una técnica de diseño tipográfico). */
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
+h2 {
+  font-size: 2rem;
+  letter-spacing: -0.01em;
+}
+
+p {
+  color: var(--text-muted); /* Los párrafos usan texto más tenue que los títulos */
+  margin-bottom: 1rem;      /* Espacio entre párrafos */
+}
+
+/* Los enlaces (<a>) no tienen subrayado y cambian de color suavemente
+   gracias a la transición definida en --transition. */
 a {
   color: var(--primary);
   text-decoration: none;
@@ -53,13 +98,26 @@ a:hover {
   color: var(--primary-hover);
 }
 
-/* Layout */
+/* ============================================================
+   LAYOUT: CONTENEDOR CENTRAL
+   .container limita el ancho máximo del contenido a 1200px
+   y usa "margin: 0 auto" para centrarlo horizontalmente.
+   El padding lateral evita que el contenido toque los bordes
+   en pantallas pequeñas.
+============================================================ */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
 }
 
+/* ============================================================
+   CABECERA (HEADER / BARRA DE NAVEGACIÓN)
+   position: sticky; hace que el header se quede fijo en la
+   parte superior mientras el usuario hace scroll.
+   z-index: 100; asegura que aparezca encima de otros elementos.
+   display: flex y align-items: center centran el contenido verticalmente.
+============================================================ */
 header {
   background-color: var(--surface-color);
   box-shadow: var(--shadow-sm);
@@ -71,6 +129,8 @@ header {
   align-items: center;
 }
 
+/* Distribuye el logo y los links en los extremos opuestos (izquierda/derecha)
+   usando justify-content: space-between. */
 .nav-content {
   display: flex;
   justify-content: space-between;
@@ -78,6 +138,8 @@ header {
   width: 100%;
 }
 
+/* El logo combina ícono SVG y texto en una misma fila.
+   gap: 0.5rem agrega espacio entre el ícono y el texto. */
 .logo {
   font-size: 1.5rem;
   font-weight: 700;
@@ -87,6 +149,7 @@ header {
   gap: 0.5rem;
 }
 
+/* Los enlaces de la navbar se acomodan en fila con gap (separación) entre ellos. */
 .nav-links {
   display: flex;
   gap: 2rem;
@@ -99,11 +162,20 @@ header {
   font-size: 0.95rem;
 }
 
-.nav-links a:hover, .nav-links a.active {
+/* - El selector :hover aplica estilos cuando el mouse pasa por encima.
+   - La clase .active marca el enlace de la página actual con color primario. */
+.nav-links a:hover,
+.nav-links a.active {
   color: var(--primary);
 }
 
-/* Buttons */
+/* ============================================================
+   BOTONES (.btn)
+   display: inline-flex permite usar flex para centrar el texto
+   e íconos dentro del botón, sin ocupar todo el ancho disponible.
+   border: none elimina el borde predeterminado del navegador.
+   cursor: pointer cambia el cursor a una mano al pasar por encima.
+============================================================ */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -118,22 +190,28 @@ header {
   gap: 0.5rem;
 }
 
+/* Botón principal: fondo de color con sombra de color para profundidad */
 .btn-primary {
   background-color: var(--primary);
   color: white;
-  box-shadow: 0 4px 12px rgba(231, 110, 85, 0.3);
+  box-shadow: 0 4px 12px rgb(231 110 85 / 30%);
 }
 
+/* Al pasar el mouse: el botón sube levemente (translateY(-2px)) y
+   su sombra se intensifica. Esto da sensación de "levantarse". */
 .btn-primary:hover {
   background-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(231, 110, 85, 0.4);
+  box-shadow: 0 6px 16px rgb(231 110 85 / 40%);
 }
 
+/* Al hacer clic (:active): el botón vuelve a su posición original,
+   simulando que se hunde al ser presionado. */
 .btn-primary:active {
   transform: translateY(0);
 }
 
+/* Botón contorneado: fondo transparente con borde visible */
 .btn-outline {
   background-color: transparent;
   border: 1.5px solid var(--border-color);
@@ -145,11 +223,16 @@ header {
   color: var(--primary);
 }
 
-/* Badges */
+/* ============================================================
+   BADGES (Indicadores numéricos circulares)
+   Se usan para mostrar el conteo de productos en el carrito.
+   position: absolute permite colocarlo "encima" del ícono padre,
+   que debe tener position: relative (ver .cart-icon-wrapper).
+============================================================ */
 .badge {
   background-color: var(--primary);
   color: white;
-  border-radius: 50%;
+  border-radius: 50%;     /* 50% hace el elemento perfectamente circular */
   width: 20px;
   height: 20px;
   display: inline-flex;
@@ -158,16 +241,24 @@ header {
   font-size: 0.7rem;
   font-weight: 700;
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -8px;   /* Lo mueve 8px hacia arriba del borde de su contenedor */
+  right: -8px; /* Lo mueve 8px hacia la derecha */
 }
 
+/* El contenedor del carrito necesita position: relative
+   para que el badge (position: absolute) se posicione
+   relativo a él y no a toda la página. */
 .cart-icon-wrapper {
   position: relative;
   display: inline-flex;
 }
 
-/* Cards */
+/* ============================================================
+   TARJETAS (.card)
+   Son contenedores reutilizables con borde suave, sombra
+   y esquinas redondeadas. overflow: hidden evita que el contenido
+   interno (como imágenes) se salga de los bordes redondeados.
+============================================================ */
 .card {
   background: var(--surface-color);
   border-radius: var(--radius);
@@ -177,12 +268,18 @@ header {
   transition: var(--transition);
 }
 
+/* Al pasar el mouse: la tarjeta sube ligeramente y su sombra
+   se hace más pronunciada, dando efecto de profundidad. */
 .card:hover {
   box-shadow: var(--shadow-md);
   transform: translateY(-4px);
 }
 
-/* Hero Section */
+/* ============================================================
+   HERO SECTION (Sección de bienvenida)
+   linear-gradient crea un degradado del fondo de la sección.
+   Va de un blanco rosado (#fff5f2) hacia el color de fondo general.
+============================================================ */
 .hero {
   padding: 5rem 0;
   text-align: center;
@@ -194,13 +291,23 @@ header {
   margin-bottom: 1.5rem;
 }
 
+/* max-width + "margin: 0 auto" centra el párrafo y limita su ancho
+   para mejorar la legibilidad (líneas muy largas son difíciles de leer). */
 .hero p {
   font-size: 1.2rem;
   max-width: 600px;
   margin: 0 auto 2.5rem;
 }
 
-/* Grid Layouts */
+/* ============================================================
+   GRIDS (Cuadrículas)
+   CSS Grid es un sistema de diseño bidimensional (filas y columnas).
+   
+   repeat(auto-fill, minmax(280px, 1fr)) significa:
+   - Crea tantas columnas como quepan en el contenedor
+   - Cada columna tiene mínimo 280px y máximo 1fr (fracción del espacio)
+   - Esto hace el grid automáticamente responsivo (se adapta a la pantalla).
+============================================================ */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -208,12 +315,18 @@ header {
   padding: 3rem 0;
 }
 
-/* Product Card Specifics */
+/* ============================================================
+   TARJETAS DE PRODUCTO
+   flex-direction: column apila los elementos verticalmente
+   (imagen arriba, texto abajo).
+============================================================ */
 .product-card {
   display: flex;
   flex-direction: column;
 }
 
+/* object-fit: cover hace que la imagen llene todo el espacio,
+   recortándola si es necesario, sin deformarla. */
 .product-image {
   height: 220px;
   width: 100%;
@@ -221,6 +334,10 @@ header {
   border-bottom: 1px solid var(--border-color);
 }
 
+/* flex-grow: 1 hace que este bloque ocupe todo el espacio
+   vertical disponible, empujando el footer hacia abajo.
+   Esto es útil para que el botón "Agregar" siempre quede
+   al fondo de la tarjeta, sin importar la longitud del texto. */
 .product-info {
   padding: 1.5rem;
   display: flex;
@@ -233,11 +350,16 @@ header {
   margin-bottom: 0.5rem;
 }
 
+/* flex-grow: 1 en la descripción la estira verticalmente
+   para que el footer quede siempre al fondo de la tarjeta. */
 .product-desc {
   font-size: 0.9rem;
   flex-grow: 1;
 }
 
+/* El pie de la tarjeta: precio a la izquierda, botón a la derecha.
+   border-top con borde punteado (dashed) separa visualmente el footer
+   del resto del contenido del producto. */
 .product-footer {
   display: flex;
   justify-content: space-between;
@@ -253,11 +375,17 @@ header {
   color: var(--text-main);
 }
 
-/* Forms */
+/* ============================================================
+   FORMULARIOS
+   Los formularios agrupan campos de entrada de datos.
+   Cada "form-group" separa un campo del siguiente con margen.
+============================================================ */
 .form-group {
   margin-bottom: 1.5rem;
 }
 
+/* Las etiquetas (<label>) se muestran como bloque (encima del input),
+   con texto de menor tamaño que el input. */
 .form-label {
   display: block;
   font-weight: 500;
@@ -265,6 +393,9 @@ header {
   font-size: 0.9rem;
 }
 
+/* .form-control estiliza los inputs de texto, selects y textareas.
+   font-family: inherit hace que el input use la misma fuente que el resto
+   de la página (por defecto, los inputs usan su propia fuente del sistema). */
 .form-control {
   width: 100%;
   padding: 0.8rem 1rem;
@@ -276,16 +407,26 @@ header {
   background-color: var(--surface-color);
 }
 
+/* :focus se activa cuando el usuario hace clic en el campo (lo selecciona).
+   outline: none quita el borde azul del navegador.
+   box-shadow agrega un resplandor suave con el color primario,
+   mejorando la accesibilidad visual. */
 .form-control:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(231, 110, 85, 0.15);
+  box-shadow: 0 0 0 3px rgb(231 110 85 / 15%);
 }
 
-/* Admin layout */
+/* ============================================================
+   LAYOUT DEL PANEL ADMINISTRADOR
+   display: flex con min-height: 100vh hace que el layout
+   ocupe toda la altura de la pantalla.
+   El sidebar (menú lateral) tiene ancho fijo y el contenido
+   principal crece para ocupar el resto del espacio.
+============================================================ */
 .admin-layout {
   display: flex;
-  min-height: 100vh;
+  min-height: 100vh; /* 100vh = 100% del alto de la ventana del navegador */
 }
 
 .admin-sidebar {
@@ -298,12 +439,14 @@ header {
   gap: 1.5rem;
 }
 
+/* Los enlaces del menú admin se apilan verticalmente en columna. */
 .admin-nav {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
+/* stylelint-disable-next-line no-descending-specificity */
 .admin-nav a {
   padding: 0.8rem 1rem;
   border-radius: var(--radius);
@@ -314,18 +457,27 @@ header {
   gap: 0.8rem;
 }
 
-.admin-nav a:hover, .admin-nav a.active {
+/* El enlace activo (página actual) tiene fondo rosado claro y texto del color primario */
+.admin-nav a:hover,
+.admin-nav a.active {
   background-color: #fff5f2;
   color: var(--primary);
 }
 
+/* flex-grow: 1 hace que el área de contenido ocupe todo
+   el espacio horizontal restante después del sidebar. */
 .admin-content {
   flex-grow: 1;
   padding: 2rem 3rem;
   background-color: var(--bg-color);
 }
 
-/* Tables */
+/* ============================================================
+   TABLAS
+   border-collapse: collapse une los bordes de las celdas
+   para que no se dupliquen entre celdas adyacentes.
+   overflow-x: auto agrega scroll horizontal en pantallas pequeñas.
+============================================================ */
 .table-wrapper {
   background: var(--surface-color);
   border-radius: var(--radius);
@@ -345,6 +497,9 @@ th, td {
   border-bottom: 1px solid var(--border-color);
 }
 
+/* Las cabeceras de la tabla tienen fondo gris claro,
+   texto en mayúsculas pequeñas (text-transform: uppercase)
+   y letter-spacing para facilitar la lectura. */
 th {
   background-color: #f9fafb;
   font-weight: 600;
@@ -354,15 +509,22 @@ th {
   letter-spacing: 0.05em;
 }
 
+/* La última fila no tiene borde inferior (queda limpia al fondo) */
 tr:last-child td {
   border-bottom: none;
 }
 
+/* Al pasar el mouse sobre una fila, se oscurece ligeramente
+   para indicar al usuario dónde está el cursor. */
 tr:hover td {
   background-color: #fcfcfc;
 }
 
-/* Status Pills */
+/* ============================================================
+   PASTILLAS DE ESTADO (Status Pills)
+   Son pequeñas etiquetas con color de fondo según el estado
+   del pedido. border-radius: 2rem las hace completamente ovaladas.
+============================================================ */
 .status {
   padding: 0.35rem 0.75rem;
   border-radius: 2rem;
@@ -371,12 +533,35 @@ tr:hover td {
   display: inline-block;
 }
 
-.status-pending { background-color: #fef3c7; color: #92400e; }
-.status-prep { background-color: #e0f2fe; color: #0369a1; }
-.status-ready { background-color: #dcfce7; color: #166534; }
-.status-delivered { background-color: #f3f4f6; color: #374151; }
+/* Cada estado del pedido tiene su propio color de fondo y texto
+   para identificarse rápidamente de forma visual: */
+.status-pending   {
+  background-color: #fef3c7;
+  color: #92400e; /* Amarillo: pendiente */
+}
 
-/* Utilities */
+.status-prep {
+  background-color: #e0f2fe;
+  color: #0369a1; /* Azul: en preparación */
+}
+
+.status-ready {
+  background-color: #dcfce7;
+  color: #166534; /* Verde: listo para entrega */
+}
+
+.status-delivered {
+  background-color: #f3f4f6;
+  color: #374151; /* Gris: entregado */
+}
+
+/* ============================================================
+   UTILIDADES (Clases de ayuda rápida)
+   Son clases pequeñas de un solo propósito, inspiradas en el
+   concepto de "utility-first CSS". Se usan directamente en el HTML
+   para agregar estilos comunes sin escribir CSS adicional.
+   La escala numérica (1-4) corresponde a múltiplos de 0.5rem.
+============================================================ */
 .text-center { text-align: center; }
 .mt-1 { margin-top: 0.5rem; }
 .mt-2 { margin-top: 1rem; }
@@ -393,7 +578,11 @@ tr:hover td {
 .gap-2 { gap: 1rem; }
 .gap-3 { gap: 1.5rem; }
 
-/* Empty States */
+/* ============================================================
+   MENSAJES DE "VACÍO" (Empty States)
+   Se muestran cuando una sección no tiene contenido
+   (ej: el carrito vacío, o una lista sin resultados).
+============================================================ */
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
@@ -404,24 +593,66 @@ tr:hover td {
   width: 64px;
   height: 64px;
   margin-bottom: 1rem;
-  color: #d1d5db;
+  color: #d1d5db; /* Gris claro para el ícono del estado vacío */
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ============================================================
+   ANIMACIONES CSS
+   @keyframes define cómo se desarrolla la animación "fadeIn":
+   - "from": estado inicial (invisible y desplazado 10px hacia abajo)
+   - "to": estado final (visible en su posición original)
+   
+   La clase .animate-fade-in aplica esta animación a un elemento.
+   forwards: mantiene los estilos finales de la animación al terminar.
+============================================================ */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+  animation: fade-in 0.4s ease-out forwards;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .hero h1 { font-size: 2.5rem; }
-  .nav-links { display: none; } /* Simplified for prototype */
-  .admin-layout { flex-direction: column; }
-  .admin-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 1rem; }
-  .admin-content { padding: 1rem; }
+/* ============================================================
+   RESPONSIVE DESIGN (Diseño Adaptable)
+   @media es una "consulta de medios" (media query).
+   El código dentro solo se aplica cuando el ancho de pantalla
+   es de 768px o menos (típicamente tabletas y celulares).
+   
+   En pantallas pequeñas:
+   - El h1 del hero se reduce para caber mejor.
+   - Los links de navegación se ocultan (simplified prototype).
+   - El layout del admin pasa de fila a columna (sidebar arriba).
+============================================================ */
+@media (width <= 768px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .nav-links {
+    display: none; /* Se ocultan los links del nav en móvil */
+  }
+
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem;
+  }
+
+  .admin-content {
+    padding: 1rem;
+  }
 }

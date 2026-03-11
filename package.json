@@ -1,0 +1,31 @@
+{
+  "name": "pan-de-casa",
+  "version": "1.0.0",
+  "description": "Sistema de gestión y catálogo en línea para la panadería artesanal \"Pan de Casa\". Permite a los clientes visualizar productos, agregarlos a un carrito y realizar pedidos. Además, cuenta con un panel de administración para gestionar el catálogo y las órdenes.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/colcarmen/PROYECTO-PAN-DE-CASA.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/colcarmen/PROYECTO-PAN-DE-CASA/issues"
+  },
+  "homepage": "https://github.com/colcarmen/PROYECTO-PAN-DE-CASA#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.3",
+    "globals": "^17.4.0",
+    "stylelint": "^17.4.0",
+    "stylelint-config-standard": "^40.0.0"
+  }
+}
